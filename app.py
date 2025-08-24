@@ -158,6 +158,43 @@ st.markdown(f"""
     .stSidebar {{
         min-width: 244px !important;
     }}
+    
+    /* Delete button styling - force no background */
+    div[data-testid="column"]:nth-child(3) .stButton > button {{
+        background: none !important;
+        background-color: transparent !important;
+        border: none !important;
+        color: #ff4b4b !important;
+        font-size: 14px !important;
+        padding: 2px 4px !important;
+        min-height: 20px !important;
+        height: 20px !important;
+        width: 20px !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        line-height: 1 !important;
+    }}
+    
+    div[data-testid="column"]:nth-child(3) .stButton > button:hover {{
+        background: none !important;
+        background-color: transparent !important;
+        color: #d32f2f !important;
+        transform: scale(1.1) !important;
+        box-shadow: none !important;
+    }}
+    
+    div[data-testid="column"]:nth-child(3) .stButton > button:focus {{
+        background: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }}
+    
+    div[data-testid="column"]:nth-child(3) .stButton > button:active {{
+        background: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -195,7 +232,7 @@ selected_date_tasks = get_tasks_by_date(selected_date)
 
 if selected_date_tasks:
 	for i, (task_text, status, task_date) in enumerate(selected_date_tasks):
-		col1, col2 = st.columns([0.1, 0.9])
+		col1, col2, col3 = st.columns([0.05, 0.9, 0.05])
 		
 		with col1:
 			# Checkbox is checked if status is "Done"
@@ -215,6 +252,13 @@ if selected_date_tasks:
 				# Update status to ToDo if checkbox is unchecked
 				if is_completed:
 					update_task_status(task_text, "ToDo")
+		
+		with col3:
+			# Delete button for each task
+			delete_key = f"delete_{i}_{task_text}_{selected_date}"
+			if st.button("🗑️", key=delete_key, help="Delete task"):
+				delete_data(task_text)
+				st.rerun()
 else:
 	if selected_date == date.today():
 		st.info("No tasks for today. Add some tasks above!")
